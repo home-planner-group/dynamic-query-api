@@ -1,7 +1,6 @@
 package com.planner.api.database;
 
 import com.planner.api.model.QueryResponse;
-import com.planner.api.utility.ApiLogger;
 import com.planner.api.utility.FileReader;
 
 import javax.enterprise.context.RequestScoped;
@@ -10,12 +9,12 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RequestScoped
 public class QueryDB {
 
-    @Inject
-    ApiLogger apiLogger;
+    private final Logger LOGGER = Logger.getLogger(QueryDB.class.getName());
 
     @Inject
     ConnectionBuilder connectionBuilder;
@@ -43,8 +42,8 @@ public class QueryDB {
      * @throws SQLException if a database access error occurs or this method is called on a closed result set
      */
     public QueryResponse executeStatementOnDefaultDB(String sqlStatement) throws SQLException {
-        apiLogger.info("Create connection to default database.");
-        apiLogger.info("Execute SQL statement: " + sqlStatement);
+        LOGGER.info("Create connection to default database.");
+        LOGGER.info("Execute SQL statement: " + sqlStatement);
 
         QueryResponse queryResult;
         // establish database connection & execute sqlStatement
@@ -73,8 +72,8 @@ public class QueryDB {
      * @throws SQLException if a database access error occurs or this method is called on a closed result set
      */
     public QueryResponse executeStatementOnCustomDB(String dbUrl, String username, String password, String sqlStatement) throws SQLException {
-        apiLogger.info("Create connection to '" + dbUrl + "' with user '" + username + "'");
-        apiLogger.info("Execute dynamic SQL statement: " + sqlStatement);
+        LOGGER.info("Create connection to '" + dbUrl + "' with user '" + username + "'");
+        LOGGER.info("Execute dynamic SQL statement: " + sqlStatement);
 
         QueryResponse queryResult;
         // establish database connection & execute sqlStatement

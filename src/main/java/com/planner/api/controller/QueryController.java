@@ -2,7 +2,6 @@ package com.planner.api.controller;
 
 import com.planner.api.database.QueryDB;
 import com.planner.api.model.QueryRequest;
-import com.planner.api.utility.ApiLogger;
 import com.planner.api.utility.FileReader;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
@@ -15,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @Path("/query")
 @Produces(MediaType.APPLICATION_JSON)
@@ -22,8 +22,7 @@ import java.sql.SQLException;
 @Tag(name = "Query Controller", description = "Controller to manage the resources for query requests.")
 public class QueryController {
 
-    @Inject
-    ApiLogger apiLogger;
+    private final Logger LOGGER = Logger.getLogger(QueryController.class.getName());
 
     @Inject
     QueryDB queryDB;
@@ -37,7 +36,7 @@ public class QueryController {
     public Response dynamicQuery(@RequestBody(description = "request model", required = true)
                                          QueryRequest model) throws SQLException {
         if (model.isStatementInvalid()) {
-            apiLogger.warning("Invalid content of the statement: " + model.getStatement());
+            LOGGER.warning("Invalid content of the statement: " + model.getStatement());
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .entity("Invalid content of the statement!")

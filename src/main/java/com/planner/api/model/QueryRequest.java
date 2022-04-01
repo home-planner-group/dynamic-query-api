@@ -1,5 +1,6 @@
 package com.planner.api.model;
 
+import com.planner.api.utility.StatementBlacklist;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

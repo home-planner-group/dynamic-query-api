@@ -13,16 +13,39 @@ Packages, Projects).
 
 ...
 
+## Architecture
+
+### Overview
+
+```
+         Http Entrypoint 
+                |           
+Models  --> Controller 
+                |
+Utility --> Database
+                |
+            MySQL DBMS
+```
+
+### Explanation
+
+* Http Entrypoint = `localhost:8088/request-path`
+* Controller = [controller-package](src/main/java/com/planner/api/controller)
+* Models = [model-package](src/main/java/com/planner/api/model)
+* Database = [database-package](src/main/java/com/planner/api/database)
+* Utility = [utility-package](src/main/java/com/planner/api/utility)
+* MySQL DBMS = `mysql://localhost:3306` or custom
+
 ## Dev Requirements
 
 * Download and Install [Java Development Kit](https://www.oracle.com/java/technologies/downloads/#jdk17) v17.0+
-    * Add `JAVA_HOME`
-    * Update `PATH`
+  * Add `JAVA_HOME`
+  * Update `PATH`
 * Download and Install [Maven](https://maven.apache.org/download.cgi) v3.8.4+
-    * Add `MAVEN_HOME`
-    * Update `PATH`
+  * Add `MAVEN_HOME`
+  * Update `PATH`
 * Download and Install [MySQL Server](https://dev.mysql.com/downloads/installer/) v8.0+
-    * Check [application.properties](src/main/resources/application.properties) for correct configuration
+  * Check [application.properties](src/main/resources/application.properties) for correct configuration
 * Download and Install [Docker](https://docs.docker.com/desktop/windows/install/)
     * Build Image: `docker build -t dynamic-query-api -f ./src/main/docker/Dockerfile.jvm .`
 
@@ -74,11 +97,3 @@ If you want to learn more about building native executables, please consult http
 ### Related Guides
 
 - RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more
-
-### Provided Code
-
-#### RESTEasy JAX-RS
-
-Easily start your RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
