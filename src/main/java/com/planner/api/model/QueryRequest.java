@@ -23,10 +23,12 @@ public class QueryRequest {
     @Schema(description = "SQL Statement", example = "SELECT * FROM table", required = true)
     private String statement;
 
+    @Schema(hidden = true)
     public boolean useDefaultDatabase() {
         return dbUrl == null || dbUrl.isEmpty() || username == null || password == null;
     }
 
+    @Schema(hidden = true)
     public boolean isStatementInvalid() {
         String normedStatement = statement.toLowerCase();
         for (String content : StatementBlacklist.BLACKLIST) {

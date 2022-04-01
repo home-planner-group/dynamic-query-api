@@ -23,27 +23,56 @@ public class QueryDB {
     @Inject
     FileReader fileReader;
 
-
+    /**
+     * @param fileName in the directory: resources/sql-statements/fileName
+     * @return extracted response
+     * @throws IOException  if file not found
+     * @throws SQLException if a database access error occurs or this method is called on a closed result set
+     */
     public QueryResponse executeStaticStatement(String fileName) throws IOException, SQLException {
-        return executeStatement(fileReader.readStaticSqlStatement(fileName));
+        return executeStatementOnDefaultDB(fileReader.readStaticSqlStatement(fileName));
     }
 
-    public QueryResponse executeStatement(String sqlStatement) throws SQLException {
+    /**
+     * Execute statement on default database.
+     * Executes all kind of statements. SELECT will extract a full response.
+     * Any other statement will return the modified rows.
+     *
+     * @param sqlStatement example: SELECT * FROM table
+     * @return extracted response
+     * @throws SQLException if a database access error occurs or this method is called on a closed result set
+     */
+    public QueryResponse executeStatementOnDefaultDB(String sqlStatement) throws SQLException {
         apiLogger.info("Create connection to default database.");
-        apiLogger.info("Execute dynamic SQL statement: " + sqlStatement);
+        apiLogger.info("Execute SQL statement: " + sqlStatement);
 
         QueryResponse queryResult;
         // establish database connection & execute sqlStatement
         try (Connection connection = connectionBuilder.createConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sqlStatement)) {
-
-            queryResult = extractResponse(resultSet);
+             Statement statement = connection.createStatement()) {
+            if (sqlStatement.toLowerCase().startsWith("select")) {
+                try (ResultSet resultSet = statement.executeQuery(sqlStatement)) {
+                    queryResult = extractResponse(resultSet);
+                }
+            } else {
+                queryResult = new QueryResponse();
+                queryResult.instanceCount = statement.executeUpdate(sqlStatement);
+            }
         }
         return queryResult;
     }
 
-    public QueryResponse executeStatement(String dbUrl, String username, String password, String sqlStatement) throws SQLException {
+    /**
+     * Execute statement on custom database. Only executes statements with query response, that means only SELECT statements are possible.
+     *
+     * @param dbUrl        pattern: jdbc:mysql://host:port/database-name
+     * @param username     example: root
+     * @param password     example: password
+     * @param sqlStatement example: SELECT * FROM table
+     * @return extracted response
+     * @throws SQLException if a database access error occurs or this method is called on a closed result set
+     */
+    public QueryResponse executeStatementOnCustomDB(String dbUrl, String username, String password, String sqlStatement) throws SQLException {
         apiLogger.info("Create connection to '" + dbUrl + "' with user '" + username + "'");
         apiLogger.info("Execute dynamic SQL statement: " + sqlStatement);
 
@@ -58,6 +87,17 @@ public class QueryDB {
         return queryResult;
     }
 
+    /**
+     * <ol>
+     *     <li>Extract column definition.</li>
+     *     <li>Extract rows as defined from the column definition.</li>
+     *     <li>Collects possible errors from the rows.</li>
+     * </ol>
+     *
+     * @param resultSet for data extraction
+     * @return extracted response
+     * @throws SQLException if a database access error occurs or this method is called on a closed result set
+     */
     private QueryResponse extractResponse(ResultSet resultSet) throws SQLException {
         QueryResponse queryResult = new QueryResponse();
 
@@ -78,7 +118,13 @@ public class QueryDB {
         return queryResult;
     }
 
-
+    /**
+     * Extract column definition of the metadata.
+     *
+     * @param resultSet for column definition
+     * @return map of column definition <array index, column name>
+     * @throws SQLException if a database access error occurs
+     */
     private Map<Integer, String> extractColumnDef(ResultSet resultSet) throws SQLException {
         Map<Integer, String> columnDef = new HashMap<>();
         ResultSetMetaData metaData = resultSet.getMetaData();
@@ -90,6 +136,14 @@ public class QueryDB {
         return columnDef;
     }
 
+    /**
+     * Extract row of result set, with the definition (order) of the column definition.
+     *
+     * @param columnDef for row definition
+     * @param resultSet to extract row from
+     * @return row as array
+     * @throws SQLException if the columnLabel is not valid; if a database access error occurs or this method is called on a closed result set
+     */
     private Object[] extractRow(Map<Integer, String> columnDef, ResultSet resultSet) throws SQLException {
         Object[] row = new Object[columnDef.keySet().size()];
 
