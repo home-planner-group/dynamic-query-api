@@ -18,7 +18,7 @@ public class DefaultHandler implements ExceptionMapper<Exception> {
     @Produces(MediaType.APPLICATION_JSON)
     public Response toResponse(Exception exception) {
         LOGGER.warning(exception.getMessage());
-        exception.printStackTrace();
+        // exception.printStackTrace();
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ExceptionResponse(exception)).build();
     }
 }
