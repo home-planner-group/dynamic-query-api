@@ -20,7 +20,7 @@ Packages, Projects).
 ```
          Http Entrypoint 
                 |           
-Models  --> Controller 
+Models  --> Controller --> ExceptionHandler
                 |
 Utility --> Database
                 |
@@ -32,6 +32,7 @@ Utility --> Database
 * Http Entrypoint = `localhost:8088/request-path`
 * Controller = [controller-package](src/main/java/com/planner/api/controller)
 * Models = [model-package](src/main/java/com/planner/api/model)
+* ExceptionHandler = [exception-package](src/main/java/com/planner/api/exception)
 * Database = [database-package](src/main/java/com/planner/api/database)
 * Utility = [utility-package](src/main/java/com/planner/api/utility)
 * MySQL DBMS = `mysql://localhost:3306` or custom
