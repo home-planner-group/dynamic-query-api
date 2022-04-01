@@ -24,22 +24,34 @@ public class QueryController {
     QueryDB queryDB;
 
     @POST
-    @Path("/statement")
+    @Path("/dynamic")
     @Operation(summary = "Dynamic Query", description = "Query with dynamic and static statement.")
-    public Response query(@RequestBody(description = "request model", required = true)
-                                  QueryRequest model) throws SQLException {
+    public Response dynamicQuery(@RequestBody(description = "request model", required = true)
+                                         QueryRequest model) throws SQLException {
+        if (model.isStatementInvalid()) {
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity("Invalid content of the statement!")
+                    .build();
+        }
 
-        return Response.status(Response.Status.OK).entity(
-                queryDB.executeStatement(model.getStatement())).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(model.useDefaultDatabase() ?
+                        queryDB.executeStatement(model.getStatement()) :
+                        queryDB.executeStatement(model.getDbUrl(), model.getUsername(), model.getPassword(), model.getStatement()))
+                .build();
     }
 
     @POST
-    @Path("/static-statement")
+    @Path("/static")
     @Operation(summary = "Static Query", description = "Query with prepared and static statement.")
     public Response staticQuery(@Parameter(description = "sql statement file name", required = true)
-                                @QueryParam("statement") String statement) throws SQLException, IOException {
+                                @QueryParam("file") String file) throws SQLException, IOException {
 
-        return Response.status(Response.Status.OK).entity(
-                queryDB.executeStaticStatement(statement)).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(queryDB.executeStaticStatement(file))
+                .build();
     }
 }
