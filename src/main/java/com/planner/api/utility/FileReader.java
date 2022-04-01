@@ -3,10 +3,10 @@ package com.planner.api.utility;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -20,7 +20,12 @@ public class FileReader {
      * @throws IOException if file not found
      */
     public String readStaticSqlStatement(String fileName) throws IOException {
-        return readStatementFile(STATEMENT_DIR + fileName);
+        String staticSqlStatement = readStatementFile(STATEMENT_DIR + fileName);
+        if (staticSqlStatement != null && !staticSqlStatement.isEmpty()) {
+            return staticSqlStatement;
+        } else {
+            throw new IOException("Content of file " + fileName + " not found!");
+        }
     }
 
     /**
@@ -49,10 +54,12 @@ public class FileReader {
         return filenames;
     }
 
-    private BufferedReader getResourceReader(String resourcePath) {
-        return new BufferedReader(
-                new InputStreamReader(
-                        Objects.requireNonNull(
-                                FileReader.class.getClassLoader().getResourceAsStream(resourcePath))));
+    private BufferedReader getResourceReader(String resourcePath) throws IOException {
+        InputStream inputStream = FileReader.class.getClassLoader().getResourceAsStream(resourcePath);
+
+        if (inputStream == null)
+            throw new IOException("No file at " + resourcePath);
+
+        return new BufferedReader(new InputStreamReader(inputStream));
     }
 }

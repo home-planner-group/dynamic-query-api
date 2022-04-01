@@ -35,13 +35,8 @@ public class QueryController {
     @Operation(summary = "Dynamic Query", description = "Query with dynamic and static statement.")
     public Response dynamicQuery(@RequestBody(description = "request model", required = true)
                                          QueryRequest model) throws SQLException {
-        if (model.isStatementInvalid()) {
-            LOGGER.warning("Invalid content of the statement: " + model.getStatement());
-            return Response
-                    .status(Response.Status.FORBIDDEN)
-                    .entity("Invalid content of the statement!")
-                    .build();
-        }
+        if (model.isStatementInvalid())
+            throw new NotAcceptableException("Invalid content of the statement: " + model.getStatement());
 
         return Response
                 .status(Response.Status.OK)
@@ -56,6 +51,8 @@ public class QueryController {
     @Operation(summary = "Static Query", description = "Query with prepared and static statement.")
     public Response staticQuery(@Parameter(description = "sql statement file name", required = true, example = "insert.sql")
                                 @QueryParam("file") String file) throws SQLException, IOException {
+        if (file == null || file.isEmpty())
+            throw new IOException("No file name specified!");
 
         return Response
                 .status(Response.Status.OK)
