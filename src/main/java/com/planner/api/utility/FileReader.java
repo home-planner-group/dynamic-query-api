@@ -51,6 +51,9 @@ public class FileReader {
                 filenames.add(resource);
             }
         }
+        // TODO fix for native build
+        // https://github.com/oracle/graal/blob/master/docs/reference-manual/native-image/Resources.md#accessing-resources-in-native-images
+        // https://quarkus.io/guides/writing-native-applications-tips#including-resources-2
         return filenames;
     }
 

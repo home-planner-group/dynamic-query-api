@@ -29,7 +29,7 @@ public class ConnectionBuilder {
      * @throws ClassNotFoundException if the driver class cannot be located
      */
     @PostConstruct
-    private void postConstruct() throws ClassNotFoundException {
+    void postConstruct() throws ClassNotFoundException {
         Class.forName(MYSQL_DRIVER_NAME);
         DriverManager.setLoginTimeout(5);
     }
