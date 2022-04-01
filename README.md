@@ -1,3 +1,6 @@
+[![Continuous-Integration](https://github.com/home-planner-group/dynamic-query-api/actions/workflows/ci.yml/badge.svg)](https://github.com/home-planner-group/dynamic-query-api/actions/workflows/ci.yml)
+[![Docker-Image](https://github.com/home-planner-group/dynamic-query-api/actions/workflows/docker-image.yml/badge.svg)](https://github.com/home-planner-group/dynamic-query-api/actions/workflows/docker-image.yml)
+
 # Dynamic Query API
 
 This project was generated with [Quarkus Initializer](https://code.quarkus.io/) version 2.7.
@@ -48,13 +51,39 @@ Utility --> Database
 * Download and Install [MySQL Server](https://dev.mysql.com/downloads/installer/) v8.0+
   * Check [application.properties](src/main/resources/application.properties) for correct configuration
 * Download and Install [Docker](https://docs.docker.com/desktop/windows/install/)
-    * Build Image: `docker build -t dynamic-query-api -f ./src/main/docker/Dockerfile.jvm .`
+  * Build Image: `docker build -t dynamic-query-api -f ./src/main/docker/Dockerfile .`
+
+## GitHub Workflows
+
+### [Continuous Integration](.github/workflows/ci.yml)
+
+* __Trigger:__ all pushes
+* Executes `mvn install`
+* Run `mvn test` with MySQL DB
+* Perform __CodeQL__ Analysis with Java
+
+### [Docker Image for GitHub](.github/workflows/docker-image.yml)
+
+* __Trigger:__ manual or on published release
+* Executes `docker build`
+* Execute `docker push` to GitHub Packages
+
+## [Docker Image](src/main/docker/Dockerfile)
+
+__Guide__: [Multistage Native Build](https://quarkus.io/guides/building-native-image#multistage-docker)
+
+* Divided into __Builder__ and __Runner__
+* Image for native executable
+* Exposes `Port 8088`
+* Uses by default __MySQL DB__ at `Port 3306`
+* Detailed configuration: [prod.properties](src/main/resources/application.properties)
 
 ## Quarkus Commands
 
 ### Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:
+
 ```shell script
 ./mvnw compile quarkus:dev
 ```
