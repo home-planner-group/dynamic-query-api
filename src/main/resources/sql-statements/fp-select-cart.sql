@@ -6,4 +6,4 @@ SELECT c.name     AS cart_name,
 FROM carts c
          JOIN cart_items item on c.id = item.cart_id
          JOIN products p on item.product_id = p.id
-WHERE c.id = 12345678;
+WHERE c.id = 1;
