@@ -4,9 +4,7 @@ import lombok.NoArgsConstructor;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor
 @Schema(name = "Query Response", description = "Model query response.")
@@ -16,7 +14,7 @@ public class QueryResponse {
     public int instanceCount = 0;
 
     @Schema(description = "Column definition with index & column name")
-    public Map<Integer, String> columnDef = new HashMap<>();
+    public List<String> columnDef = new ArrayList<>();
 
     @Schema(description = "Row with objects. column = row[columnDef.key]")
     public List<Object[]> rows = new ArrayList<>();
@@ -26,5 +24,4 @@ public class QueryResponse {
 
     @Schema(description = "Messages from occurred errors (ordered)")
     public List<String> errorMessages = new ArrayList<>();
-
 }

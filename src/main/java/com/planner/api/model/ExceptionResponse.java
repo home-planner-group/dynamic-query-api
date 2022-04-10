@@ -20,7 +20,7 @@ public class ExceptionResponse {
     private final String timestamp;
 
     public ExceptionResponse(Exception exception) {
-        this.exception = exception.getClass().getName();
+        this.exception = exception.getClass().getSimpleName();
         this.message = exception.getMessage();
         this.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
     }

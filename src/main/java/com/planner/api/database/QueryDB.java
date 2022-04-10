@@ -7,8 +7,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -124,13 +124,13 @@ public class QueryDB {
      * @return map of column definition <array index, column name>
      * @throws SQLException if a database access error occurs
      */
-    private Map<Integer, String> extractColumnDef(ResultSet resultSet) throws SQLException {
-        Map<Integer, String> columnDef = new HashMap<>();
+    private List<String> extractColumnDef(ResultSet resultSet) throws SQLException {
+        List<String> columnDef = new ArrayList<>();
         ResultSetMetaData metaData = resultSet.getMetaData();
 
         for (int colIndex = 0; colIndex < metaData.getColumnCount(); colIndex++) {
             // meta data column count starts at 1
-            columnDef.put(colIndex, metaData.getColumnName(colIndex + 1));
+            columnDef.add(metaData.getColumnName(colIndex + 1));
         }
         return columnDef;
     }
@@ -143,11 +143,12 @@ public class QueryDB {
      * @return row as array
      * @throws SQLException if the columnLabel is not valid; if a database access error occurs or this method is called on a closed result set
      */
-    private Object[] extractRow(Map<Integer, String> columnDef, ResultSet resultSet) throws SQLException {
-        Object[] row = new Object[columnDef.keySet().size()];
+    private Object[] extractRow(List<String> columnDef, ResultSet resultSet) throws SQLException {
+        Object[] row = new Object[columnDef.size()];
 
-        for (Integer columnIndex : columnDef.keySet()) {
-            row[columnIndex] = resultSet.getObject(columnDef.get(columnIndex));
+        for (int i = 0; i < columnDef.size(); i++) {
+            // meta data column count starts at 1
+            row[i] = resultSet.getObject(i + 1);
         }
         return row;
     }
