@@ -11,7 +11,8 @@ import java.sql.SQLException;
 @Singleton
 public class ConnectionBuilder {
 
-    private static final String MYSQL_DRIVER_NAME = "com.mysql.jdbc.Driver";
+    // private static final String MYSQL_DRIVER_NAME = "com.mysql.jdbc.Driver";
+    private static final String MYSQL_DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
 
     @ConfigProperty(name = "database.url")
     String dbUrl;

@@ -14,15 +14,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 @Path("/query")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Query Controller", description = "Controller to manage the resources for query requests.")
 public class QueryController {
-
-    private final Logger LOGGER = Logger.getLogger(QueryController.class.getName());
 
     @Inject
     QueryDB queryDB;

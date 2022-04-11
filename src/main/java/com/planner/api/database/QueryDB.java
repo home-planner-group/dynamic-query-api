@@ -130,7 +130,7 @@ public class QueryDB {
 
         for (int colIndex = 0; colIndex < metaData.getColumnCount(); colIndex++) {
             // meta data column count starts at 1
-            columnDef.add(metaData.getColumnName(colIndex + 1));
+            columnDef.add(metaData.getColumnLabel(colIndex + 1));
         }
         return columnDef;
     }
