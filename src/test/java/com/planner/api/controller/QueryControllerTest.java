@@ -4,6 +4,7 @@ import com.google.common.net.HttpHeaders;
 import com.planner.api.database.QueryDB;
 import com.planner.api.model.QueryRequest;
 import com.planner.api.model.QueryResponse;
+import io.quarkus.test.junit.DisabledOnNativeImage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ class QueryControllerTest {
     QueryDB queryDB;
 
     @BeforeEach
+    @DisabledOnNativeImage
     void initDatabase() throws SQLException, IOException {
         LOGGER.info("\n\n========== TEST PREPARATION ==========\n");
         QueryResponse queryResponse = queryDB.executeStaticStatement("fp-create-tables-and-data.sql");
@@ -35,6 +37,7 @@ class QueryControllerTest {
     }
 
     @Test
+    @DisabledOnNativeImage
     void dynamicQuery() {
         String requestPath = "/query/dynamic";
         QueryRequest body = new QueryRequest();
@@ -69,6 +72,7 @@ class QueryControllerTest {
     }
 
     @Test
+    @DisabledOnNativeImage
     void dynamicQueryBadRequest() {
         String requestPath = "/query/dynamic";
         QueryRequest body = new QueryRequest();
@@ -83,6 +87,7 @@ class QueryControllerTest {
     }
 
     @Test
+    @DisabledOnNativeImage
     void staticQuery() {
         String requestPath = "/query/static?file=fp-select-recipes.sql";
         String response = given()
