@@ -4,6 +4,7 @@ import com.google.common.net.HttpHeaders;
 import com.planner.api.database.QueryDB;
 import com.planner.api.model.QueryRequest;
 import com.planner.api.model.QueryResponse;
+import io.quarkus.test.junit.DisabledOnNativeImage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
+@DisabledOnNativeImage
 class QueryControllerTest {
 
     private static final Logger LOGGER = Logger.getLogger(QueryControllerTest.class.getName());
