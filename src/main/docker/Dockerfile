@@ -10,7 +10,7 @@ WORKDIR /code
 RUN chmod +x mvnw
 RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
 COPY src /code/src
-RUN ./mvnw package -Pnative
+RUN ./mvnw package -Pnative -DskipTests
 RUN echo "======== NATIVE TESTS ========"
 RUN ./mvnw verify -Pnative
 
