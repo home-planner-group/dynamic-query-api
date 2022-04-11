@@ -37,25 +37,29 @@ public class QueryDB {
      * Executes all kind of statements. SELECT will extract a full response.
      * Any other statement will return the modified rows.
      *
-     * @param sqlStatement example: SELECT * FROM table
+     * @param fileStatement example: SELECT * FROM table
      * @return extracted response
      * @throws SQLException if a database access error occurs or this method is called on a closed result set
      */
-    public QueryResponse executeStatementOnDefaultDB(String sqlStatement) throws SQLException {
+    public QueryResponse executeStatementOnDefaultDB(String fileStatement) throws SQLException {
         LOGGER.info("Create connection to default database.");
-        LOGGER.info("Execute SQL statement: " + sqlStatement);
 
         QueryResponse queryResult;
         // establish database connection & execute sqlStatement
         try (Connection connection = connectionBuilder.createConnection();
              Statement statement = connection.createStatement()) {
-            if (sqlStatement.toLowerCase().startsWith("select")) {
-                try (ResultSet resultSet = statement.executeQuery(sqlStatement)) {
+            if (fileStatement.toLowerCase().startsWith("select")) {
+                LOGGER.info("Execute SQL statement:\n" + fileStatement);
+                try (ResultSet resultSet = statement.executeQuery(fileStatement)) {
                     queryResult = extractResponse(resultSet);
                 }
             } else {
                 queryResult = new QueryResponse();
-                queryResult.instanceCount = statement.executeUpdate(sqlStatement);
+                String[] separatedStatements = fileStatement.split(";");
+                for (String separatedStatement : separatedStatements) {
+                    LOGGER.info("Execute SQL statement:\n" + separatedStatement);
+                    queryResult.instanceCount = statement.execute(separatedStatement) ? 1 : 0;
+                }
             }
         }
         return queryResult;

@@ -1,12 +1,15 @@
-drop table if exists recipe_items cascade;
-drop table if exists recipes cascade;
-drop table if exists storage_items cascade;
-drop table if exists products cascade;
-drop table if exists user_roles cascade;
-drop table if exists roles cascade;
-drop table if exists user_storages cascade;
-drop table if exists storages cascade;
-drop table if exists users cascade;
+drop table if exists recipe_items;
+drop table if exists recipes;
+drop table if exists storage_items;
+drop table if exists user_storages;
+drop table if exists storages;
+drop table if exists cart_items;
+drop table if exists user_carts;
+drop table if exists carts;
+drop table if exists products;
+drop table if exists user_roles;
+drop table if exists users;
+drop table if exists roles;
 
 create table carts
 (

@@ -1,4 +1,4 @@
-drop table ancestors;
+drop table if exists ancestors;
 
 create table ancestors
 (

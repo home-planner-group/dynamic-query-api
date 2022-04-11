@@ -1,8 +1,8 @@
-drop table TA;
-drop table Takes;
-drop table Class;
-drop table Professor;
-drop table Student;
+drop table if exists TA;
+drop table if exists Takes;
+drop table if exists Class;
+drop table if exists Professor;
+drop table if exists Student;
 
 
 create table Professor

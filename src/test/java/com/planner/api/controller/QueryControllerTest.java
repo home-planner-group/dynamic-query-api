@@ -1,20 +1,38 @@
 package com.planner.api.controller;
 
 import com.google.common.net.HttpHeaders;
+import com.planner.api.database.QueryDB;
 import com.planner.api.model.QueryRequest;
+import com.planner.api.model.QueryResponse;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @QuarkusTest
 class QueryControllerTest {
 
     private static final Logger LOGGER = Logger.getLogger(QueryControllerTest.class.getName());
+
+    @Inject
+    QueryDB queryDB;
+
+    @BeforeEach
+    void initDatabase() throws SQLException, IOException {
+        LOGGER.info("\n\n========== TEST PREPARATION ==========\n");
+        QueryResponse queryResponse = queryDB.executeStaticStatement("fp-create-tables-and-data.sql");
+        assertNotNull(queryResponse);
+        LOGGER.info("\n\n========== TEST CASE =================\n");
+    }
 
     @Test
     void dynamicQuery() {
@@ -78,7 +96,7 @@ class QueryControllerTest {
                 .asString();
 
         LOGGER.info("[" + requestPath + "] Response: '" + response + "'");
-        assertTrue(response.contains("Pasta"), "Expected contains 'Pasta'.");
+        assertTrue(response.contains("recipe_name"), "Expected contains 'recipe_name'.");
     }
 
     @Test
