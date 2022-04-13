@@ -14,6 +14,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 @Path("/query")
 @Produces(MediaType.APPLICATION_JSON)
@@ -61,10 +63,25 @@ public class QueryController {
     @Path("/static-files")
     @Operation(summary = "Available Files", description = "Get all available files.")
     public Response getFiles() throws IOException {
-
+        List<String> files = fileReader.getStatementFiles();
+        if (files.isEmpty())
+            files = placeholderNativeFileList(); // TODO fix the selection for native files
         return Response
                 .status(Response.Status.OK)
-                .entity(fileReader.getStatementFiles())
+                .entity(files)
                 .build();
+    }
+
+    private List<String> placeholderNativeFileList() {
+        return Arrays.asList("db2-create-ancestor-table.sql",
+                "db2-create-stud-tables.sql",
+                "db2-select-ancestor.sql",
+                "fp-create-tables-and-data.sql",
+                "fp-insert-cart.sql",
+                "fp-insert-user.sql",
+                "fp-select-cart.sql",
+                "fp-select-carts-from-user.sql",
+                "fp-select-low-storage-products.sql",
+                "fp-select-recipes.sql");
     }
 }

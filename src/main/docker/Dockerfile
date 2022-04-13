@@ -11,8 +11,8 @@ RUN chmod +x mvnw
 RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
 COPY src /code/src
 RUN ./mvnw package -Pnative -DskipTests
-RUN echo "======== NATIVE TESTS ========"
-RUN ./mvnw verify -Pnative -DskipTests
+# TODO run native tests without jvm tests
+RUN ./mvnw test-compile failsafe:integration-test
 
 FROM quay.io/quarkus/quarkus-micro-image:1.0 AS runner
 
