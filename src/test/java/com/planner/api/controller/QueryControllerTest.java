@@ -3,7 +3,6 @@ package com.planner.api.controller;
 import com.google.common.net.HttpHeaders;
 import com.planner.api.model.DynamicRequest;
 import com.planner.api.model.StaticRequest;
-import io.quarkus.test.junit.DisabledOnNativeImage;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +18,6 @@ class QueryControllerTest {
     private static final Logger LOGGER = Logger.getLogger(QueryControllerTest.class.getName());
 
     @Test
-    @DisabledOnNativeImage
     void dynamicQueryNotAcceptable() {
         String requestPath = "/query/dynamic";
         DynamicRequest body = new DynamicRequest();
@@ -34,7 +32,6 @@ class QueryControllerTest {
     }
 
     @Test
-    @DisabledOnNativeImage
     void staticQueryNotFound() {
         String requestPath = "/query/static";
         StaticRequest body = new StaticRequest();
