@@ -35,6 +35,11 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
         }
     }
 
+    /**
+     * @param status    http status
+     * @param exception exception for body
+     * @return http response
+     */
     private Response buildResponse(Response.Status status, Exception exception) {
         return Response.status(status).entity(new ExceptionResponse(exception)).build();
     }
