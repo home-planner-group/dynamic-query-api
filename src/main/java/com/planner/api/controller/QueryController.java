@@ -1,10 +1,11 @@
 package com.planner.api.controller;
 
-import com.planner.api.database.QueryDB;
-import com.planner.api.model.QueryRequest;
-import com.planner.api.utility.FileReader;
+import com.planner.api.database.ConnectionBuilder;
+import com.planner.api.database.JdbcExecutor;
+import com.planner.api.files.FileReader;
+import com.planner.api.model.DynamicRequest;
+import com.planner.api.model.StaticRequest;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
@@ -14,8 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 @Path("/query")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,7 +23,10 @@ import java.util.List;
 public class QueryController {
 
     @Inject
-    QueryDB queryDB;
+    JdbcExecutor jdbcExecutor;
+
+    @Inject
+    ConnectionBuilder connectionBuilder;
 
     @Inject
     FileReader fileReader;
@@ -33,55 +35,51 @@ public class QueryController {
     @Path("/dynamic")
     @Operation(summary = "Dynamic Query", description = "Query with dynamic and static statement.")
     public Response dynamicQuery(@RequestBody(description = "request model", required = true)
-                                         QueryRequest model) throws SQLException {
+                                         DynamicRequest model) throws SQLException {
         if (model.isStatementInvalid())
             throw new NotAcceptableException("Invalid content of the statement: " + model.getStatement());
 
         return Response
                 .status(Response.Status.OK)
                 .entity(model.useDefaultDatabase() ?
-                        queryDB.executeStatementOnDefaultDB(model.getStatement()) :
-                        queryDB.executeStatementOnCustomDB(model.getDbUrl(), model.getUsername(), model.getPassword(), model.getStatement()))
+                        jdbcExecutor.executeDynamicQuery(model.getStatement()) :
+                        jdbcExecutor.executeDynamicQuery(model.getDbUrl(), model.getUsername(), model.getPassword(), model.getStatement()))
                 .build();
     }
 
     @POST
     @Path("/static")
     @Operation(summary = "Static Query", description = "Query with prepared and static statement.")
-    public Response staticQuery(@Parameter(description = "sql statement file name", required = true, example = "insert.sql")
-                                @QueryParam("file") String file) throws SQLException, IOException {
-        if (file == null || file.isEmpty())
+    public Response staticQuery(@RequestBody(description = "request model", required = true)
+                                        StaticRequest model) throws SQLException, IOException {
+        if (model.isFileNameInvalid())
             throw new IOException("No file name specified!");
 
         return Response
                 .status(Response.Status.OK)
-                .entity(queryDB.executeStaticStatement(file))
+                .entity(model.useDefaultDatabase() ?
+                        jdbcExecutor.executeStaticFile(model.getFileName()) :
+                        jdbcExecutor.executeStaticFile(model.getDbUrl(), model.getUsername(), model.getPassword(), model.getFileName()))
                 .build();
     }
 
     @GET
-    @Path("/static-files")
-    @Operation(summary = "Available Files", description = "Get all available files.")
+    @Path("/sql-files")
+    @Operation(summary = "Available Files", description = "Get all available sql files.")
     public Response getFiles() throws IOException {
-        List<String> files = fileReader.getStatementFiles();
-        if (files.isEmpty())
-            files = placeholderNativeFileList(); // TODO fix the selection for native files
         return Response
                 .status(Response.Status.OK)
-                .entity(files)
+                .entity(fileReader.getStatementFiles())
                 .build();
     }
 
-    private List<String> placeholderNativeFileList() {
-        return Arrays.asList("db2-create-ancestor-table.sql",
-                "db2-create-stud-tables.sql",
-                "db2-select-ancestor.sql",
-                "fp-create-tables-and-data.sql",
-                "fp-insert-cart.sql",
-                "fp-insert-user.sql",
-                "fp-select-cart.sql",
-                "fp-select-carts-from-user.sql",
-                "fp-select-low-storage-products.sql",
-                "fp-select-recipes.sql");
+    @GET
+    @Path("/default-connection")
+    @Operation(summary = "Default Connection", description = "Get default connection info.")
+    public Response getDefaultConnectionInfo() {
+        return Response
+                .status(Response.Status.OK)
+                .entity(connectionBuilder.getDefaultConnectionInfo())
+                .build();
     }
 }

@@ -7,18 +7,24 @@ This project was generated with [Quarkus Initializer](https://code.quarkus.io/) 
 
 The application starts on [http://localhost:8088](http://localhost:8088/swagger-ui).
 
-### Purpose
+### Description
 
 This project has the purpose to get involved with __Quarkus__ (Java, Maven), __Docker__ and __GitHub__ (Actions,
 Packages, Projects).
 
-### Description
+## Docker Image
 
-...
+* __Dockerfile__: [Multistage Dockerfile for native Build](src/main/docker/Dockerfile)
+* __Guide__: [Multistage Native Build](https://quarkus.io/guides/building-native-image#multistage-docker)
+* __Default Settings:__ [prod.properties](src/main/resources/application.properties)
+  * Exposes `Port 8088`
+  * Uses by default __MySQL DB__ at `Port 3306`
+* __Pull Image:__
+  * `docker pull ghcr.io/home-planner-group/dynamic-query-api:latest`
+* __Run Container:__
+  * `docker run -d -p 8088:8088 --name query-api ghcr.io/home-planner-group/dynamic-query-api:latest`
 
 ## Architecture
-
-### Overview
 
 ```
          Http Entrypoint 
@@ -30,15 +36,18 @@ Utility --> Database
             MySQL DBMS
 ```
 
-### Explanation
+<details>
+  <summary>Explanation</summary>
 
 * Http Entrypoint = `localhost:8088/request-path`
 * Controller = [controller-package](src/main/java/com/planner/api/controller)
 * Models = [model-package](src/main/java/com/planner/api/model)
 * ExceptionHandler = [exception-package](src/main/java/com/planner/api/exception)
 * Database = [database-package](src/main/java/com/planner/api/database)
-* Utility = [utility-package](src/main/java/com/planner/api/utility)
+* Utility = [files-package](src/main/java/com/planner/api/files)
 * MySQL DBMS = `mysql://localhost:3306` or custom
+
+</details>
 
 ## Dev Requirements
 
@@ -55,75 +64,86 @@ Utility --> Database
 
 ## GitHub Workflows
 
-### [Continuous Integration](.github/workflows/ci.yml)
+<details>
+  <summary>Continuous Integration Workflow</summary>
 
-* __Trigger:__ all pushes
-* Executes `mvn install`
-* Run `mvn test` with MySQL DB
-* Perform __CodeQL__ Analysis with Java
+* [.github/workflows/ci.yml](.github/workflows/ci.yml)
+  * __Trigger:__ all pushes
+  * Executes `mvn install`
+  * Run `mvn test` on JVM build with MySQL DB
+  * Perform __CodeQL__ Analysis with Java
 
-### [Docker Image for GitHub](.github/workflows/docker-image.yml)
+</details>
 
-* __Trigger:__ manual or on published release
-* Executes `docker build`
-* Execute `docker push` to GitHub Packages
+<details>
+  <summary>Docker Image Delivery Workflow</summary>
 
-## [Docker Image](src/main/docker/Dockerfile)
+* [.github/workflows/docker-image.yml](.github/workflows/docker-image.yml)
+  * __Trigger:__ manual or on published release
+  * Executes `docker build` with native Integration Test
+  * Execute `docker push` to GitHub Packages
 
-__Guide__: [Multistage Native Build](https://quarkus.io/guides/building-native-image#multistage-docker)
-
-* Divided into __Builder__ and __Runner__
-* Image for native executable
-* Exposes `Port 8088`
-* Uses by default __MySQL DB__ at `Port 3306`
-* Detailed configuration: [prod.properties](src/main/resources/application.properties)
+</details>
 
 ## Quarkus Commands
 
-### Running the application in dev mode
+<details>
+  <summary>Running the application in dev mode</summary>
 
 You can run your application in dev mode that enables live coding using:
 
-```shell script
-./mvnw compile quarkus:dev
-```
+  ```shell script
+  ./mvnw compile quarkus:dev
+  ```
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+</details>
 
-### Packaging and running the application
+<details>
+  <summary>Packaging and running the application</summary>
 
 The application can be packaged using:
-```shell script
-./mvnw package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+
+  ```shell script
+  ./mvnw package
+  ```
+
+It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory. Be aware that it’s not an _über-jar_ as
+the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
 The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
 
 If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
-```
+
+  ```shell script
+  ./mvnw package -Dquarkus.package.type=uber-jar
+  ```
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+</details>
 
-### Creating a native executable
+<details>
+  <summary>Creating a native executable</summary>
 
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
-```
+You can create a native executable using:
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
+  ```shell script
+  ./mvnw package -Pnative
+  ```
+
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+
+  ```shell script
+  ./mvnw package -Pnative -Dquarkus.native.container-build=true
+  ```
 
 You can then execute your native executable with: `./target/dynamic-query-api-1.0.0-SNAPSHOT-runner`
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+</details>
 
-### Related Guides
+<details>
+  <summary>Related Guides</summary>
 
-- RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more
+RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more
+</details>

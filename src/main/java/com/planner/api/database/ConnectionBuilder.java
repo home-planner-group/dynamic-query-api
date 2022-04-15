@@ -1,5 +1,6 @@
 package com.planner.api.database;
 
+import com.planner.api.model.ConnectionInfo;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.annotation.PostConstruct;
@@ -7,10 +8,12 @@ import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @Singleton
 public class ConnectionBuilder {
 
+    private final Logger LOGGER = Logger.getLogger(ConnectionBuilder.class.getName());
     // private static final String MYSQL_DRIVER_NAME = "com.mysql.jdbc.Driver";
     private static final String MYSQL_DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
 
@@ -43,6 +46,7 @@ public class ConnectionBuilder {
      * @throws SQLException if a database access error occurs or the url is null
      */
     public Connection createConnection() throws SQLException {
+        LOGGER.info("Create connection to default database: " + dbUrl);
         return DriverManager.getConnection(dbUrl, username, password);
     }
 
@@ -54,6 +58,14 @@ public class ConnectionBuilder {
      * @throws SQLException if a database access error occurs or the url is null
      */
     public Connection createConnection(String dbUrl, String username, String password) throws SQLException {
+        LOGGER.info("Create connection to custom database: " + dbUrl);
         return DriverManager.getConnection(dbUrl, username, password);
+    }
+
+    /**
+     * @return connection ifo of default database
+     */
+    public ConnectionInfo getDefaultConnectionInfo() {
+        return new ConnectionInfo(dbUrl);
     }
 }

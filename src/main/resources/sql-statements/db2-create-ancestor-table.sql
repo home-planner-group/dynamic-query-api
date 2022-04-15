@@ -13,7 +13,7 @@ create table ancestors
 );
 
 
-insert into ancestors
+insert into ancestors (pNr, personName, gender, birthYear, birthMonth, motherNr, fatherNr)
 values (1, 'Marie', 'f', 1867, 11, null, null),
        (2, 'Pierre', 'm', 1859, 5, null, null),
        (3, 'Frederic', 'm', 1900, 3, 1, 2),
