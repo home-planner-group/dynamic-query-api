@@ -1,3 +1,5 @@
+drop trigger if exists recipe_kcal_calc;
+drop trigger if exists recipe_calc_items;
 drop table if exists recipe_items;
 drop table if exists recipes;
 drop table if exists storage_items;
@@ -37,6 +39,8 @@ create table recipes
     description varchar(255),
     duration    integer,
     name        varchar(255) not null unique,
+    kcal        integer,
+    item_count  integer,
     primary key (id)
 );
 create table roles
@@ -110,6 +114,27 @@ create table cart_items
     primary key (cart_id, product_id)
 );
 
+CREATE TRIGGER recipe_kcal_calc
+    AFTER INSERT
+    ON recipe_items
+    FOR EACH ROW
+    UPDATE recipes
+    SET recipes.kcal = (
+        SELECT SUM(kcal) AS kcal_sum
+        FROM recipe_items
+                 JOIN products p on p.id = recipe_items.product_id
+        WHERE recipe_items.recipe_id = recipes.id);
+
+CREATE TRIGGER recipe_calc_items
+    AFTER INSERT
+    ON recipe_items
+    FOR EACH ROW
+    UPDATE recipes
+    SET recipes.item_count = (
+        SELECT COUNT(recipe_items.product_id) AS item_calc
+        FROM recipe_items
+        WHERE recipes.id = recipe_id);
+
 INSERT
     IGNORE
 INTO roles (name)
@@ -131,17 +156,17 @@ VALUES ('Admin', 'ROLE_USER'),
 
 INSERT
     IGNORE
-INTO products (id, name, category, package_size)
-VALUES (1, 'Penne', 'Pasta', 500),
-       (2, 'Spaghetti', 'Pasta', 500),
-       (3, 'Farfalle', 'Pasta', 500),
-       (4, 'Paprika', 'Vegetable', 1),
-       (5, 'Tomato', 'Vegetable', 1),
-       (6, 'Mozzarella', 'Cheese', 1),
-       (7, 'Wrap', 'Bread', 6),
-       (8, 'Cereals', 'Breakfast', 300),
-       (9, 'Tomato Pesto', 'Pasta', 1),
-       (10, 'Yoghurt', 'Breakfast', 500);
+INTO products (id, name, category, package_size, kcal)
+VALUES (1, 'Penne', 'Pasta', 500, 500),
+       (2, 'Spaghetti', 'Pasta', 500, 500),
+       (3, 'Farfalle', 'Pasta', 500, 500),
+       (4, 'Paprika', 'Vegetable', 1, 30),
+       (5, 'Tomato', 'Vegetable', 1, 30),
+       (6, 'Mozzarella', 'Cheese', 1, 250),
+       (7, 'Wrap', 'Bread', 6, 130),
+       (8, 'Cereals', 'Breakfast', 300, 110),
+       (9, 'Tomato Pesto', 'Pasta', 1, 75),
+       (10, 'Yoghurt', 'Breakfast', 500, 85);
 
 INSERT
     IGNORE
